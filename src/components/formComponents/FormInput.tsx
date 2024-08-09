@@ -3,7 +3,12 @@ import { Input } from "@chakra-ui/react";
 import FormWrapper from "./FormWrapper";
 import { IFormInputProps } from "@src/interface/forms";
 
-const FormInput = React.forwardRef<HTMLInputElement, IFormInputProps>(
+interface IFormSelectProps
+  extends Omit<IFormInputProps, "onBlur"> {
+  onBlur?: any;
+}
+
+const FormInput = React.forwardRef<HTMLInputElement, IFormSelectProps>(
   (
     {
       name,
@@ -22,6 +27,9 @@ const FormInput = React.forwardRef<HTMLInputElement, IFormInputProps>(
     },
     ref
   ) => {
+    const handleBlur = () => {
+      onBlur(name);
+    };
     return (
       <FormWrapper
         isInvalid={Boolean(error && touched)}
@@ -37,7 +45,7 @@ const FormInput = React.forwardRef<HTMLInputElement, IFormInputProps>(
           type={type}
           value={value}
           onChange={onChange}
-          onBlur={onBlur}
+          onBlur={handleBlur}
           // styles
           width="100%"
           maxHeight="none !important"
@@ -47,10 +55,17 @@ const FormInput = React.forwardRef<HTMLInputElement, IFormInputProps>(
           fontWeight="500"
           px="20px"
           border="1px solid #c0bcd7"
+          borderColor={touched ? (error ? "1px solid #c0bcd7" : "1px solid #c0bcd7") : "1px solid #c0bcd7"}
+          _focus={{
+            borderColor: touched && error ? "1px solid #c0bcd7" : "#428df7",
+            boxShadow: "none",
+            border:"2px solid #428df7"
+          }}
+          _invalid={{
+            borderColor: "1px solid #c0bcd7",
+          }}
           bg="inputBg"
           borderRadius="10px"
-          focusBorderColor="primary"
-          errorBorderColor="errorRed"
           _placeholder={{
             color: "text.placeholder",
           }}

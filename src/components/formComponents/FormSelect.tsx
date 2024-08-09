@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "@chakra-ui/react";
 import FromWrapper from "./FormWrapper";
 import { IFormInputProps } from "@src/interface/forms";
@@ -29,11 +29,17 @@ const FormSelect: React.FC<IFormSelectProps> = ({
 }) => {
   const theme = useTheme();
 
-  const handleChange = (value: any) => {
-    onChange && onChange(name, value?.value);
+  const [bodyElement, setBodyElement] = useState<HTMLElement | null>(null);
+  useEffect(() => {
+    setBodyElement(document.body);
+  },[])
+
+  const handleChange = (selectedOption: any) => {
+    onChange(name, selectedOption?.value);
   };
+
   const handleBlur = () => {
-    onBlur && onBlur(name, true);
+    onBlur(name);
   };
 
   return (
@@ -89,7 +95,9 @@ const FormSelect: React.FC<IFormSelectProps> = ({
             fontSize: ".875rem",
             fontWeight: "500",
           }),
+          menu: provided => ({ ...provided, zIndex: 999,marginTop:'-1.5rem' }),
         }}
+        menuPortalTarget={bodyElement}
         {...selectProps}
       />
       {children}

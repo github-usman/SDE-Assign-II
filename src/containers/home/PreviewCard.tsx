@@ -1,5 +1,7 @@
 import { Box, Flex, Text, Grid } from "@chakra-ui/react";
 import React from "react";
+import { useData } from "./DataProvider";
+import { genderOptions, interviewLanguageOptions, urgencyOptions } from "./constants";
 
 const DataCard: React.FC<{ title: string; children: React.ReactNode }> = ({
   title,
@@ -33,7 +35,18 @@ const KeyValue: React.FC<{
   );
 };
 
+
+// utility funtion to preview label instead of value
+export const getLabelFromValue = (value: string, options: { label: string; value: string }[]) => {
+  const option = options.find(opt => opt.value === value);
+  return option ? option.label : '-';
+};
+
 const PreviewCard: React.FC = () => {
+
+  const { state } = useData();
+  const { requisitionDetails,jobDetails,interviewSettings } = state;
+
   return (
     <Box p="1rem">
       <Box borderRadius="10px" bgColor="gray.100" height="fit-content">
@@ -63,30 +76,30 @@ const PreviewCard: React.FC = () => {
               justifyContent="space-between"
               alignItems="center"
             >
-              <Text fontSize="0.9rem" fontWeight="500"></Text>
+              <Text fontSize="0.9rem" fontWeight="500">{requisitionDetails.requisitionTitle}</Text>
               <Flex justifyContent="space-around" alignItems="center">
                 <Text fontSize="0.8rem" mr="0.4rem" fontWeight="200" as="p">
                   OPENINGS
                 </Text>
-                <Text fontSize="1rem" fontWeight="bold" as="span"></Text>
+                <Text fontSize="1rem" fontWeight="bold" as="span">{requisitionDetails.noOfOpenings}</Text>
               </Flex>
             </Flex>
           </Box>
         </Box>
         <Box maxH="50rem" overflowY="auto" px="24px" pb="24px">
           <DataCard title="Requisition Details">
-            <KeyValue title="Urgency" value="" />
-            <KeyValue title="Gender" value="" />
+            <KeyValue title="Urgency" value={getLabelFromValue(requisitionDetails.urgency,urgencyOptions)} />
+            <KeyValue title="Gender" value={getLabelFromValue(requisitionDetails.gender,genderOptions)} />
           </DataCard>
           <DataCard title="Job Detail">
-            <KeyValue title="Job Title" value="" />
-            <KeyValue title="Job Details" value="" />
-            <KeyValue title="Job Location" value="" />
+            <KeyValue title="Job Title" value={jobDetails.jobTitle} />
+            <KeyValue title="Job Details" value={jobDetails.jobDetails}/>
+            <KeyValue title="Job Location" value={jobDetails.jobLocation} />
           </DataCard>
           <DataCard title="Interview Settings">
-            <KeyValue title="Interview Duration" value="" />
-            <KeyValue title="Interview Language" value="" />
-            <KeyValue title="Interview Mode" value="" />
+            <KeyValue title="Interview Duration" value={interviewSettings.interviewDuration} />
+            <KeyValue title="Interview Language" value={getLabelFromValue(interviewSettings.interviewLanguage,interviewLanguageOptions)} />
+            <KeyValue title="Interview Mode" value={interviewSettings.interviewMode} />
           </DataCard>
         </Box>
       </Box>

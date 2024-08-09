@@ -7,8 +7,13 @@ import FormInput from "../../components/formComponents/FormInput";
 import FormSelect from "../../components/formComponents/FormSelect";
 import { IRequisitionDetails } from "../../interface/forms";
 import { genderOptions, urgencyOptions } from "./constants";
+import { useData } from "./DataProvider";
 
-const RequisitionDetailsForm: React.FC = () => {
+interface RequisitionDetailsProps{
+  onNext:()=>void
+}
+const RequisitionDetailsForm: React.FC<RequisitionDetailsProps> = ({onNext}) => {
+  const {state,setState} = useData();
   const {
     handleChange,
     errors,
@@ -19,12 +24,7 @@ const RequisitionDetailsForm: React.FC = () => {
     setFieldTouched,
     setFieldValue,
   } = useFormik<IRequisitionDetails>({
-    initialValues: {
-      requisitionTitle: "",
-      noOfOpenings: 0,
-      urgency: "",
-      gender: "",
-    },
+    initialValues: state.requisitionDetails,
     validationSchema: Yup.object().shape({
       requisitionTitle: Yup.string().required("Requisition title is required"),
       noOfOpenings: Yup.number()
@@ -36,9 +36,21 @@ const RequisitionDetailsForm: React.FC = () => {
       gender: Yup.string().required("Gender is required"),
     }),
     onSubmit: (values) => {
-      //  Go to Next Step
+      setState(prevState => ({
+        ...prevState,
+        requisitionDetails: values
+      }));
+      onNext();
     },
   });
+
+  const handleFieldChange = (name: string, value: any) => {
+    setFieldValue(name, value);
+    setState(prevState => ({
+      ...prevState,
+      requisitionDetails: { ...values, [name]: value }
+    }));
+  };
 
   return (
     <Box width="100%" as="form" onSubmit={handleSubmit as any}>
@@ -47,7 +59,7 @@ const RequisitionDetailsForm: React.FC = () => {
           label="Requisition Title"
           placeholder="Enter requisition title"
           name="requisitionTitle"
-          onChange={handleChange}
+          onChange={(e) => handleFieldChange(e.target.name, e.target.value)}
           onBlur={handleBlur}
           value={values?.requisitionTitle}
           error={errors?.requisitionTitle}
@@ -57,7 +69,7 @@ const RequisitionDetailsForm: React.FC = () => {
           label="Number of openings"
           placeholder="Enter number of openings"
           name="noOfOpenings"
-          onChange={handleChange}
+          onChange={(e) => handleFieldChange(e.target.name, e.target.value)}
           onBlur={handleBlur}
           value={values?.noOfOpenings}
           error={errors?.noOfOpenings}
@@ -68,8 +80,8 @@ const RequisitionDetailsForm: React.FC = () => {
           name="gender"
           placeholder="Select gender"
           options={genderOptions}
-          onChange={setFieldValue}
-          onBlur={setFieldTouched}
+          onChange={handleFieldChange}
+          onBlur={handleBlur}
           error={errors.gender}
           touched={touched.gender}
           value={values.gender}
@@ -79,8 +91,8 @@ const RequisitionDetailsForm: React.FC = () => {
           name="urgency"
           placeholder="Select urgency"
           options={urgencyOptions}
-          onChange={setFieldValue}
-          onBlur={setFieldTouched}
+          onChange={handleFieldChange}
+          onBlur={handleBlur}
           error={errors.urgency}
           touched={touched.urgency}
           value={values.urgency}
