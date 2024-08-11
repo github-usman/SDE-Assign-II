@@ -38,7 +38,11 @@ const RequisitionDetailsForm: React.FC<RequisitionDetailsProps> = ({onNext}) => 
     onSubmit: (values) => {
       setState(prevState => ({
         ...prevState,
-        requisitionDetails: values
+        requisitionDetails: values,
+        completedFormTabs: {
+          ...prevState.completedFormTabs,
+          requisitionDetails: true,
+        },
       }));
       onNext();
     },

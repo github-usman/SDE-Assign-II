@@ -17,6 +17,10 @@ const initialValues = {
     interviewLanguage: "",
     interviewMode: "",
   },
+  completedFormTabs: {
+    requisitionDetails: false,
+    jobDetails: false,
+  },
 };
 
 const DataContext = createContext<{

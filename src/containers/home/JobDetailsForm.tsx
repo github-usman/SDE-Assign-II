@@ -25,7 +25,11 @@ const JobDetailsForm: React.FC<IJobDetailsProps> = ({onNext,onPrev}) => {
       onSubmit: (values) => {
         setState(prevState => ({
           ...prevState,
-          jobDetails: values
+          jobDetails: values,
+          completedFormTabs: {
+            ...prevState.completedFormTabs,
+            jobDetails: true,
+          },
         }));
         onNext();
       },
